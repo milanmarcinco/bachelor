@@ -1,0 +1,13 @@
+services:
+  meilisearch:
+    image: getmeili/meilisearch:latest
+    container_name: meilisearch
+    environment:
+      MEILI_MASTER_KEY: "y9iPmYwIjjm6uqLZ9SejDViU6SbkfufLZTfuffufMzfPJM"
+    ports:
+      - "7700:7700"
+    volumes:
+      - meili:/meili_data
+
+volumes:
+  meili:

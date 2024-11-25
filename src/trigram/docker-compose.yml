@@ -12,15 +12,5 @@ services:
     volumes:
       - postgres:/var/lib/postgresql/data
 
-  meilisearch:
-    image: getmeili/meilisearch:latest
-    container_name: meilisearch
-    environment:
-      MEILI_MASTER_KEY: "y9iPmYwIjjm6uqLZ9SejDViU6SbkfufLZTfuffufMzfPJM"
-    ports:
-      - "7700:7700"
-    volumes:
-      - ./data:/meili_data
-
 volumes:
   postgres:
