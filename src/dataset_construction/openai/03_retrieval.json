@@ -1,0 +1,74 @@
+{
+  "software engineering methodologies and models": [
+    {
+      "id": "ae648c4d-c222-4565-8759-5cde6251f826",
+      "title": "Softvérové inžinierstvo v otázkach a odpovediach"
+    }
+  ],
+  "what are Echo State Networks in AI": [
+    {
+      "id": "22467151-271b-49c2-85c7-197696e27903",
+      "title": "Umelá inteligencia a kognitívna veda II"
+    }
+  ],
+  "introduction to mathematical logic exercises": [
+    {
+      "id": "9e5b6ea5-2728-4496-9e49-82732bbcabc7",
+      "title": "Úvod do matematickej logiky"
+    },
+    {
+      "id": "fb672719-9bbe-45a9-9a4b-d1b3188eb28f",
+      "title": "Úvod do matematickej logiky I"
+    }
+  ],
+  "principles of quantum computing explained": [
+    {
+      "id": "c6566bb1-6d34-4c8b-a967-785e4ccf9492",
+      "title": "Quantum Computing for Everyone"
+    }
+  ],
+  "how to improve website usability techniques": [
+    {
+      "id": "53baf470-a881-4d7c-acbf-09b03fddaded",
+      "title": "Základné metódy na zlepšenie použitel’nosti webov"
+    }
+  ],
+  "basic concepts of artificial intelligence": [
+    {
+      "id": "34f944b5-b819-4ae3-afa1-592b466d80ab",
+      "title": "Umelá inteligencia"
+    }
+  ],
+  "LaTeX documentation structure guide": [
+    {
+      "id": "60e4a65e-bd07-4360-ad26-b8c712ea3f53",
+      "title": "LATEXovník - Štruktúra zdrojového súboru"
+    },
+    {
+      "id": "9bab2e37-4aa4-4115-81ab-9a80c6324638",
+      "title": "Nie príliš stručný úvod do systému LATEX2e"
+    },
+    {
+      "id": "834e69d9-b698-4af5-90e8-203d17b2ba68",
+      "title": "Vybrané metódy inžinierskej práce"
+    }
+  ],
+  "digitization of currencies and blockchain technology": [
+    {
+      "id": "dd4675da-d675-4d11-ad8c-10860daab977",
+      "title": "Základy digitálnych mien a blockchain sietí"
+    }
+  ],
+  "C programming language practical examples": [
+    {
+      "id": "9e9b8ee7-fca7-48a5-bd25-5c88c33c1cee",
+      "title": "PROGRAMOVANIE V JAZYKU C V RIEŠENÝCH PRÍKLADOCH 1"
+    }
+  ],
+  "database systems SQL tutorial overview": [
+    {
+      "id": "34d6f118-53f6-43a3-a55a-cf589c97a302",
+      "title": "Základy databázových systémov"
+    }
+  ]
+}
