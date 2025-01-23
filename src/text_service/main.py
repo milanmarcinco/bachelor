@@ -51,6 +51,7 @@ def perform(idx: int, docs: Queue):
         filepath = f"../../dataset/{filename}"
 
         log_file.write(f"[{id}]: Starting...\n")
+        log_file.flush()
 
         text_handler = TextHandler(filepath)
         sentences, paragraphs, pages = text_handler.extract_text()
@@ -70,7 +71,9 @@ def perform(idx: int, docs: Queue):
             )
 
         a, b, c = len(sentences), len(paragraphs), len(pages)
+
         log_file.write(f"[{id}]: {a} {b} {c}\n")
+        log_file.flush()
 
 
 if __name__ == "__main__":
@@ -90,7 +93,7 @@ if __name__ == "__main__":
             args=(idx, docs),
             daemon=True
         )
-        for idx in range(4)
+        for idx in range(1)
     ]
 
     for process in processes:
