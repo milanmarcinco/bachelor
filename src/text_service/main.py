@@ -21,15 +21,15 @@ def perform(idx: int, docs: Queue):
 
         try:
             text_handler = TextHandler(filepath)
-            sentences, paragraphs, pages = text_handler.extract_text()
+            pages, paragraphs, sentences = text_handler.extract_text()
         except:
-            sentences, paragraphs, pages = None, None, None
+            pages, paragraphs, sentences = None, None, None
 
         with open(f"output/{id}.json", "w") as file:
             output = {
-                "sentences": sentences,
+                "pages": pages,
                 "paragraphs": paragraphs,
-                "pages": pages
+                "sentences": sentences
             }
 
             json.dump(
