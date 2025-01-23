@@ -1,6 +1,9 @@
 /env
 /dataset
 
+**/output
+**/__pycache__
+
 .env
 
 .idea
