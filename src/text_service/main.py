@@ -53,8 +53,11 @@ def perform(idx: int, docs: Queue):
         log_file.write(f"[{id}]: Starting...\n")
         log_file.flush()
 
-        text_handler = TextHandler(filepath)
-        sentences, paragraphs, pages = text_handler.extract_text()
+        try:
+            text_handler = TextHandler(filepath)
+            sentences, paragraphs, pages = text_handler.extract_text()
+        except:
+            sentences, paragraphs, pages = None, None, None
 
         with open(f"output/{id}.json", "w") as file:
             output = {
@@ -70,9 +73,16 @@ def perform(idx: int, docs: Queue):
                 ensure_ascii=False
             )
 
-        a, b, c = len(sentences), len(paragraphs), len(pages)
+        if all([
+            type(sentences) == list,
+            type(paragraphs) == list,
+            type(pages) == list
+        ]):
+            a, b, c = len(sentences), len(paragraphs), len(pages)
+            log_file.write(f"[{id}]: {a} {b} {c}\n")
+        else:
+            log_file.write(f"[{id}]: Failed\n")
 
-        log_file.write(f"[{id}]: {a} {b} {c}\n")
         log_file.flush()
 
 
