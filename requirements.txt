@@ -1,2 +1,11 @@
 sentence_transformers
 meilisearch
+python-dotenv
+openai
+deepl
+
+python-dotenv==1.0.1
+pymupdf
+ocrmypdf
+pytesseract
+pdf2image
