@@ -6,7 +6,7 @@ users:
     sudo: ALL=(ALL) NOPASSWD:ALL
     shell: /bin/bash
     ssh_authorized_keys:
-      - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINoRk1Kav46Hg7eZlRbcxOaaynQ9NdEOr77x5z/fLgPo marcinco;personal;thinkpad
+      - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIAyhRWVVIqE0hJdZNBpzW2AVeDHV7F19MHaTlQLyYRDl marcinco;personal;labestia
 
 package_update: true
 package_upgrade: true
@@ -33,6 +33,6 @@ runcmd:
   - systemctl enable postgresql
   - postgresql-setup --initdb --unit postgresql
   - systemctl start postgresql
-  - sudo -u postgres psql -c "CREATE USER milan WITH PASSWORD 'xxxxx';"
+  - sudo -u postgres psql -c "CREATE USER milan WITH ENCRYPTED PASSWORD 'xxxxx';"
   - sudo -u postgres psql -c "CREATE DATABASE bachelor OWNER milan"
   - reboot

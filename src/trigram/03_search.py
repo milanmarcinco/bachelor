@@ -1,7 +1,33 @@
 import json
-from typing import List
+import os
+from threading import Thread, Lock
+from multiprocessing import Queue
+from typing import List, Tuple, TypedDict, Callable
 from helpers.db import db
 
+
+class Task(TypedDict):
+    part: str
+    lang: str
+    query: str
+    query_id: int
+
+
+class Document(TypedDict):
+    id: str
+    similarity: float
+
+
+class TaskResult(TypedDict):
+    part: str
+    lang: str
+    query: str
+    query_id: int
+    documents: List[Document]
+
+
+dirpath = f"data/retrieval/trigram"
+os.makedirs(dirpath, exist_ok=True)
 
 with open("data/dataset/02_queries-EN.json", "r") as file:
     en_queries: List[str] = json.load(file)
@@ -14,53 +40,158 @@ parts = ['paragraph', 'sentence', 'page']
 languages = ["en", "sk", "de"]
 queries_by_language = {
     "en": en_queries,
-    # "sk": sk_queries,
-    # "de": de_queries
+    "sk": sk_queries,
+    "de": de_queries
 }
 
 
 def search(part, query):
-    db.execute("""
-        SET pg_trgm.similarity_threshold = 0;
-    
-        SELECT
-            id,
-            similarity
-        FROM (
+    try:
+        db.execute("""
+            SET pg_trgm.similarity_threshold = 0;
+        
             SELECT
-                document_id AS id,
-                MAX(similarity) AS similarity,
-                COUNT(document_id) AS matches
+                id,
+                similarity
             FROM (
                 SELECT
-                    document_id,
-                    SIMILARITY(content, %s)
-                FROM
-                    document_parts
-                WHERE
-                    part = %s
-                        AND
-                    content %% %s
-                ORDER BY
-                    content <-> %s
+                    document_id AS id,
+                    MAX(similarity) AS similarity,
+                    COUNT(document_id) AS matches
+                FROM (
+                    SELECT
+                        document_id,
+                        SIMILARITY(content, %s)
+                    FROM
+                        document_parts
+                    WHERE
+                        part = %s
+                            AND
+                        content %% %s
+                )
+                GROUP BY
+                    document_id
             )
-            GROUP BY
-                document_id
-        )
-        ORDER BY
-            similarity DESC,
-            matches DESC,
-            id ASC;
-    """, (query, part, query, query))
+            ORDER BY
+                similarity DESC,
+                matches DESC,
+                id ASC;
+        """, (query, part, query))
 
-    results = db.fetchall()
-    return results
+        results = db.fetchall()
+
+        return results
+    except:
+        return None
 
 
-for part in parts[:1]:
+print_lock = Lock()
+
+
+def safe_print(*args, **kwargs):
+    print_lock.acquire()
+    print(*args, **kwargs, flush=True)
+    print_lock.release()
+
+
+size = len(parts) * len(languages) * len(en_queries)
+task_queue = Queue(size)
+result_queue = Queue(size)
+
+for part in parts:
     for lang in languages:
         queries = queries_by_language[lang]
 
-        for query in queries[:10]:
-            results = search(part, query)
-            print(results)
+        for idx, query in enumerate(queries):
+            task_queue.put({
+                "part": part,
+                "lang": lang,
+                "query": query,
+                "query_id": idx + 1
+            })
+
+
+def process_tasks(idx: int, task_queue: Queue, result_queue: Queue, log: Callable):
+    while True:
+        try:
+            task: Task = task_queue.get_nowait()
+        except:
+            break
+
+        result: List[Tuple[str, float]] | None = search(
+            task["part"],
+            task["query"]
+        )
+
+        documents: List[Document] = [
+            {
+                "id": id,
+                "similarity": similarity
+            } for id, similarity in result
+        ]
+
+        task_result: TaskResult = {
+            "part": task["part"],
+            "lang": task["lang"],
+            "query": task["query"],
+            "query_id": task["query_id"],
+            "documents": documents
+        }
+
+        result_queue.put(task_result)
+
+        task_id = f"{task['part']}-{task['lang']}-{task['query_id']}"
+        log(f"Thread[{idx+1}]: Finished {task_id}")
+
+
+def process_results(result_queue: Queue, log: Callable):
+    while True:
+        task_result: TaskResult | None = result_queue.get()
+
+        if task_result is None:
+            break
+
+        part, lang, query_id = (
+            task_result["part"],
+            task_result["lang"],
+            task_result["query_id"]
+        )
+
+        filepath = f"{dirpath}/{part}-{lang}-{query_id}.json"
+        with open(filepath, "w") as file:
+            json.dump(task_result, file, indent=2, ensure_ascii=False)
+
+        task_id = f"{part}-{lang}-{query_id}"
+        log(f"Saved {task_id}")
+
+
+worker_threads: List[Thread] = []
+
+for idx in range(4):
+    thread = Thread(
+        target=process_tasks,
+        args=(
+            idx,
+            task_queue,
+            result_queue,
+            safe_print
+        )
+    )
+
+    worker_threads.append(thread)
+
+result_thread = Thread(
+    target=process_results,
+    args=(result_queue, safe_print)
+)
+
+result_thread.start()
+
+for thread in worker_threads:
+    thread.start()
+
+for thread in worker_threads:
+    thread.join()
+
+result_queue.put(None)
+result_thread.join()
