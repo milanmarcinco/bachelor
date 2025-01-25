@@ -124,11 +124,16 @@ def process_tasks(idx: int, task_queue: Queue, result_queue: Queue, log: Callabl
         except:
             break
 
+        task_id = f"{task['part']}-{task['lang']}-{task['query_id']}"
+
         result: List[Tuple[str, float]] | None = search(
             connection,
             task["part"],
             task["query"]
         )
+
+        if result is None:
+            log(f"! Thread[{idx+1}]: Failed {task_id}")
 
         documents: List[Document] = [
             {
@@ -147,7 +152,6 @@ def process_tasks(idx: int, task_queue: Queue, result_queue: Queue, log: Callabl
 
         result_queue.put(task_result)
 
-        task_id = f"{task['part']}-{task['lang']}-{task['query_id']}"
         log(f"Thread[{idx+1}]: Finished {task_id}")
 
     connection.close()
