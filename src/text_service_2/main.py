@@ -4,7 +4,7 @@ from extractor import extract
 
 os.makedirs("output", exist_ok=True)
 
-with open("/data/library/metadata.json") as file:
+with open("../../data/library/metadata.json") as file:
     documents = json.load(file)
 
 for document in documents:

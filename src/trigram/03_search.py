@@ -3,11 +3,11 @@ from typing import List
 from helpers.db import db
 
 
-with open("/data/dataset/02_queries-EN.json", "r") as file:
+with open("data/dataset/02_queries-EN.json", "r") as file:
     en_queries: List[str] = json.load(file)
-with open("/data/dataset/02_queries-SK.json", "r") as file:
+with open("data/dataset/02_queries-SK.json", "r") as file:
     sk_queries: List[str] = json.load(file)
-with open("/data/dataset/02_queries-DE.json", "r") as file:
+with open("data/dataset/02_queries-DE.json", "r") as file:
     de_queries: List[str] = json.load(file)
 
 parts = ['paragraph', 'sentence', 'page']

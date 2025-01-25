@@ -1,14 +1,14 @@
 import json
 from helpers.db import db
 
-with open("/data/dataset/metadata.json", "r") as file:
+with open("data/library/metadata.json", "r") as file:
     documents = json.load(file)
 
 documents[:1]
 
 
 def load_parts(document_id):
-    filepath = f"/data/document_parts/json/{document_id}.json"
+    filepath = f"data/document_parts/json/{document_id}.json"
 
     with open(filepath, "r") as file:
         parts = json.load(file)
