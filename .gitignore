@@ -1,11 +1,7 @@
 /env
-/dataset
-
-**/output
-**/__pycache__
-
-*.tar.gz
+/data
 
 .env
 
+**/__pycache__
 .idea

@@ -12,7 +12,7 @@ def extract(text):
 
         if line == "":
             p = re.split(
-                r"([a-zA-Z\)]{3}\.)\s([a-zA-Z]{1})",
+                r"([a-zA-Z\(\)\{\}\'\"]{3}\.)\s([a-zA-Z]{1})",
                 " ".join(paragraph)
             )
 
