@@ -3,7 +3,9 @@ import os
 from threading import Thread, Lock
 from multiprocessing import Queue
 from typing import List, Tuple, TypedDict, Callable
-from helpers.db import db
+from psycopg2.extensions import connection
+
+from helpers.db import connection_factory
 
 
 class Task(TypedDict):
@@ -45,9 +47,10 @@ queries_by_language = {
 }
 
 
-def search(part, query):
+def search(connection: connection, part: str, query: str):
     try:
-        db.execute("""
+        cursor = connection.cursor()
+        cursor.execute("""
             SET pg_trgm.similarity_threshold = 0;
         
             SELECT
@@ -78,7 +81,8 @@ def search(part, query):
                 id ASC;
         """, (query, part, query))
 
-        results = db.fetchall()
+        results = cursor.fetchall()
+        cursor.close()
 
         return results
     except:
@@ -112,6 +116,8 @@ for part in parts:
 
 
 def process_tasks(idx: int, task_queue: Queue, result_queue: Queue, log: Callable):
+    connection = connection_factory()
+
     while True:
         try:
             task: Task = task_queue.get_nowait()
@@ -119,6 +125,7 @@ def process_tasks(idx: int, task_queue: Queue, result_queue: Queue, log: Callabl
             break
 
         result: List[Tuple[str, float]] | None = search(
+            connection,
             task["part"],
             task["query"]
         )
@@ -142,6 +149,8 @@ def process_tasks(idx: int, task_queue: Queue, result_queue: Queue, log: Callabl
 
         task_id = f"{task['part']}-{task['lang']}-{task['query_id']}"
         log(f"Thread[{idx+1}]: Finished {task_id}")
+
+    connection.close()
 
 
 def process_results(result_queue: Queue, log: Callable):
