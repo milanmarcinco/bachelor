@@ -1,9 +1,11 @@
+name: bachelor
+
 services:
   meilisearch:
+    container_name: bachelor-meilisearch
     image: getmeili/meilisearch:latest
-    container_name: meilisearch
     environment:
-      MEILI_MASTER_KEY: "y9iPmYwIjjm6uqLZ9SejDViU6SbkfufLZTfuffufMzfPJM"
+      MEILI_MASTER_KEY: ${MEILI_KEY}
     ports:
       - "7700:7700"
     volumes:
