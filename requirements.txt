@@ -3,9 +3,5 @@ meilisearch
 python-dotenv
 openai
 deepl
-psycopg2
-
-pymupdf
-ocrmypdf
-pytesseract
-pdf2image
+psycopg2_binary
+requests
