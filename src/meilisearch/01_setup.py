@@ -18,18 +18,21 @@ res = requests.patch(
     headers=base_headers
 ).json()
 
+print(res)
+
 
 for model_id in MODEL_IDS:
     model_detail = MODEL_DETAILS[model_id]
 
     for part in PARTS:
         index_name = get_index_name(part, model_id)
+        client.create_index(index_name, {
+            "primaryKey": "id"
+        })
 
-        client.create_index(index_name)
         index = client.index(index_name)
 
         index.update_distinct_attribute("document_id")
-
         index.update_embedders({
             "default": {
                 "source": "userProvided",
