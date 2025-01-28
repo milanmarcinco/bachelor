@@ -17,7 +17,7 @@ MEILI_KEY: str = env["MEILI_KEY"]
 MEILI_URL: str = env["MEILI_URL"]
 
 PARTS: List[Part] = ["paragraphs", "sentences", "pages"][:1]
-MODEL_IDS: List[ModelId] = ["e5", "labse", "gte"]
+MODEL_IDS: List[ModelId] = ["e5", "labse", "gte"][:1]
 
 MODEL_DETAILS: Dict[ModelId, ModelDetail] = {
     "e5": {
