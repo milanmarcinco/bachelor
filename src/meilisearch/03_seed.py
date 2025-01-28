@@ -40,7 +40,7 @@ for model_id in MODEL_IDS:
         index_name = get_index_name(part, model_id)
         index = client.index(index_name)
 
-        for idx, document in enumerate(documents[20:]):
+        for idx, document in enumerate(documents[50:]):
             docs_progress = f"{idx+1}/{len(documents)}"
             print(f"[{model_id}][{part}][{docs_progress}]")
 
@@ -69,7 +69,6 @@ for model_id in MODEL_IDS:
                     documents_batch.append({
                         "id": f"{doc_id}_{serial_number}",
                         "document_id": doc_id,
-                        "text": parts_batch[j],
                         "_vectors": {
                             "default": vectors_batch[j]
                         }
