@@ -1,5 +1,5 @@
 import meilisearch
-from lib.conf import MEILI_URL, MEILI_KEY
+from lib.conf import MEILI_URL, MEILI_KEY, Part, ModelId
 
 
 def get_meilisearch_client():
@@ -9,5 +9,5 @@ def get_meilisearch_client():
 client = get_meilisearch_client()
 
 
-def get_index_name(part: str, model_id: str):
+def get_index_name(part: Part, model_id: ModelId):
     return f"{part}-{model_id}"

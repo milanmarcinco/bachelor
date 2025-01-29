@@ -2,6 +2,7 @@ import dotenv
 from typing import List, Dict, Literal, TypedDict
 
 Part = Literal["sentences", "paragraphs", "pages"]
+Language = Literal["en", "sk", "de"]
 ModelId = Literal["e5", "labse", "gte"]
 
 
@@ -17,7 +18,8 @@ MEILI_KEY: str = env["MEILI_KEY"]
 MEILI_URL: str = env["MEILI_URL"]
 
 PARTS: List[Part] = ["paragraphs", "sentences", "pages"][:1]
-MODEL_IDS: List[ModelId] = ["e5", "labse", "gte"][:1]
+LANGUAGES: List[Language] = ["en", "sk", "de"]
+MODEL_IDS: List[ModelId] = ["e5", "labse", "gte"]
 
 MODEL_DETAILS: Dict[ModelId, ModelDetail] = {
     "e5": {

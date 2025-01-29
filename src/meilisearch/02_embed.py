@@ -54,10 +54,7 @@ for model_id in MODEL_IDS:
 
                 parts_batch = parts[i * batch_size:(i + 1) * batch_size]
                 try:
-                    embeddings: ndarray[
-                        Tuple[int, int],
-                        float
-                    ] = embedder.encode(parts_batch)
+                    embeddings = embedder.encode(parts_batch)
                 except Exception as e:
                     # fmt: off
                     print(f"[{model_id}][{part}][{docs_progress}][{batch_progress}]: Error computing embeddings: {e}")
@@ -65,8 +62,6 @@ for model_id in MODEL_IDS:
                     # fmt: on
 
                 for i in range(len(parts_batch)):
-                    embedding: ndarray[Tuple[int], float] = embeddings[i]
-                    vector: List[float] = embedding.tolist()
-
-                    s = struct.pack('d' * len(vector), *vector)
+                    embedding = embeddings[i]
+                    s = struct.pack('d' * len(embedding), *embedding)
                     bin_file.write(s)

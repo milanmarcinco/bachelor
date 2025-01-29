@@ -40,7 +40,7 @@ for model_id in MODEL_IDS:
         index_name = get_index_name(part, model_id)
         index = client.index(index_name)
 
-        for idx, document in enumerate(documents[50:]):
+        for idx, document in enumerate(documents):
             docs_progress = f"{idx+1}/{len(documents)}"
             print(f"[{model_id}][{part}][{docs_progress}]")
 

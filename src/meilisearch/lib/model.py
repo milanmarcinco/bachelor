@@ -1,6 +1,8 @@
-from lib.conf import ModelDetail
-from typing import List
+from numpy import ndarray
 from sentence_transformers import SentenceTransformer
+from typing import List, Tuple
+
+from lib.conf import ModelDetail
 
 
 class Model:
@@ -14,7 +16,18 @@ class Model:
         )
 
     def encode(self, parts: List[str]):
-        return self.model.encode(
+        raw_embeddings: List[
+            ndarray[int, float]
+        ] = self.model.encode(
             parts,
             normalize_embeddings=True
         )
+
+        embeddings: List[List[float]] = []
+
+        for embedding in raw_embeddings:
+            embeddings.append(
+                embedding.tolist()
+            )
+
+        return embeddings
