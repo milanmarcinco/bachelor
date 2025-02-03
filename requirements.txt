@@ -5,3 +5,4 @@ openai
 deepl
 psycopg2_binary
 requests
+pandas

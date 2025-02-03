@@ -38,7 +38,7 @@ class TaskResult(TypedDict):
     documents: List[Document]
 
 
-base_dirpath = f"data/retrieval/meilisearch_2"
+base_dirpath = f"data/retrieval"
 for model_id in MODEL_IDS:
     dirpath = f"{base_dirpath}/{model_id}"
     os.makedirs(dirpath, exist_ok=True)
