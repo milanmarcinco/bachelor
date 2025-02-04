@@ -1,7 +1,6 @@
 import json
 import math
 import struct
-import time
 from typing import List
 
 from lib.conf import Part, PARTS, MODEL_IDS, MODEL_DETAILS
@@ -17,7 +16,7 @@ def load_parts(document_id: str, part: Part) -> List[str]:
     with open(filepath, "r") as file:
         parts = json.load(file)
 
-    return parts[part]
+    return parts[f"{part}s"]
 
 
 def load_vectors(document_id: str, index_name: str, dimensions: int) -> List[List[float]]:
@@ -39,6 +38,7 @@ for model_id in MODEL_IDS:
         print(f"[{model_id}][{part}]")
         index_name = get_index_name(part, model_id)
         index = client.index(index_name)
+        index.delete_all_documents()
 
         for idx, document in enumerate(documents):
             docs_progress = f"{idx+1}/{len(documents)}"

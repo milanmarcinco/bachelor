@@ -17,7 +17,7 @@ env = dotenv.dotenv_values()
 MEILI_KEY: str = env["MEILI_KEY"]
 MEILI_URL: str = env["MEILI_URL"]
 
-PARTS: List[Part] = ["paragraph", "sentence", "page"][:1]
+PARTS: List[Part] = ["paragraph", "sentence", "page"]
 LANGUAGES: List[Language] = ["en", "sk", "de"]
 MODEL_IDS: List[ModelId] = ["e5", "labse", "gte"]
 

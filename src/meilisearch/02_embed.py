@@ -1,10 +1,8 @@
 import json
 import struct
-import uuid
 import math
 import os
-from typing import List, Tuple
-from numpy import ndarray
+from typing import List
 
 from lib.conf import Part, PARTS, MODEL_IDS, MODEL_DETAILS
 from lib.meili import get_index_name
@@ -20,7 +18,7 @@ def load_parts(document_id: str, part: Part) -> List[str]:
     with open(filepath, "r") as file:
         parts = json.load(file)
 
-    return parts[part]
+    return parts[f"{part}s"]
 
 
 for model_id in MODEL_IDS:
@@ -43,7 +41,7 @@ for model_id in MODEL_IDS:
 
             parts = load_parts(doc_id, part)
 
-            batch_size = 32
+            batch_size = 8192
             batch_count = math.ceil(len(parts) / batch_size)
 
             bin_file = open(f"{dir_path}/{doc_id}.bin", "ab")
