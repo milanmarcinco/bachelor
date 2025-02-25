@@ -2,9 +2,8 @@ import os
 import json
 from typing import List, TypedDict, Callable
 from multiprocessing import Queue
-from threading import Thread, Lock, Barrier
-from numpy import ndarray
-from typing import List, Dict
+from threading import Thread, Lock
+from typing import List
 
 from lib.conf import Part, ModelId, PARTS, LANGUAGES, MODEL_IDS, MODEL_DETAILS
 from lib.meili import get_meilisearch_client, get_index_name
@@ -38,7 +37,7 @@ class TaskResult(TypedDict):
     documents: List[Document]
 
 
-base_dirpath = f"data/retrieval"
+base_dirpath = "data/retrieval"
 for model_id in MODEL_IDS:
     dirpath = f"{base_dirpath}/{model_id}"
     os.makedirs(dirpath, exist_ok=True)
