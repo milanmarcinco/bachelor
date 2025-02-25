@@ -1,0 +1,26 @@
+@startuml db-schema
+
+skinparam dpi 300
+
+object documents {
+  + id: uuid
+  + title: varchar[255]
+}
+
+object document_parts {
+  + id: uuid
+  + document_id: uuid
+  + part: part_enum
+  + content: text
+}
+
+object part_enum {
+  sentence
+  paragraph
+  page
+}
+
+document_parts --> documents
+document_parts --> part_enum
+
+@enduml
