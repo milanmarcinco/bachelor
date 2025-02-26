@@ -34,7 +34,7 @@ for model_id in MODEL_IDS:
         dir_path = f"data/vectors/{index_name}"
         os.makedirs(dir_path, exist_ok=True)
 
-        for idx, document in enumerate(documents[:3]):
+        for idx, document in enumerate(documents):
             docs_progress = f"{idx+1}/{len(documents)}"
             print(f"[{model_id}][{part}][{docs_progress}]")
 
@@ -43,18 +43,18 @@ for model_id in MODEL_IDS:
 
             parts = load_parts(doc_id, part)
 
-            vectors_batch_size = 8192
-            batch_count = math.ceil(len(parts) / vectors_batch_size)
+            parts_batch_size = 8192
+            parts_batch_count = math.ceil(len(parts) / parts_batch_size)
 
-            for i in range(0, batch_count):
-                batch_progress = f"{i+1}/{batch_count}"
+            for i in range(0, parts_batch_count):
+                batch_progress = f"{i+1}/{parts_batch_count}"
 
                 print(
                     f"[{model_id}][{part}][{docs_progress}][{batch_progress}]: computing embeddings start"
                 )
 
                 parts_batch = parts[
-                    i * vectors_batch_size:(i + 1) * vectors_batch_size
+                    i * parts_batch_size:(i + 1) * parts_batch_size
                 ]
 
                 try:
@@ -69,32 +69,30 @@ for model_id in MODEL_IDS:
                     f"[{model_id}][{part}][{docs_progress}][{batch_progress}]: computing embeddings finished"
                 )
 
-                doc_batch_size = 32
-                batch_count = math.ceil(len(parts) / doc_batch_size)
-                for i in range(0, batch_count):
-                    batch_progress = f"{i+1}/{batch_count}"
+                embeddings_batch_size = 32
+                embeddings_batch_count = math.ceil(
+                    len(embeddings) / embeddings_batch_size)
+
+                for j in range(0, embeddings_batch_count):
+                    batch_progress = f"{j + 1}/{embeddings_batch_count}"
 
                     print(
                         f"[{model_id}][{part}][{docs_progress}][{batch_progress}]: indexing start"
                     )
 
-                    parts_batch = parts[
-                        i * doc_batch_size:(i + 1) * doc_batch_size
-                    ]
-
-                    vectors_batch = embeddings[
-                        i * doc_batch_size:(i + 1) * doc_batch_size
+                    embeddings_batch = embeddings[
+                        j * embeddings_batch_size:(j + 1) * embeddings_batch_size
                     ]
 
                     documents_batch = []
-                    for j in range(len(parts_batch)):
-                        serial_number = i * doc_batch_size + j
+                    for k in range(len(embeddings_batch)):
+                        serial_number = i * parts_batch_count + j * embeddings_batch_count + k
 
                         documents_batch.append({
                             "id": f"{doc_id}_{serial_number}",
                             "document_id": doc_id,
                             "_vectors": {
-                                "default": vectors_batch[j]
+                                "default": embeddings_batch[k]
                             }
                         })
 

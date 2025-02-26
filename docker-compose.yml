@@ -4,6 +4,7 @@ services:
   script:
     container_name: script
     image: bachelor-script
+    network_mode: host
     environment:
       - DB_NAME=${DB_NAME}
       - DB_USER=${DB_USER}
@@ -22,14 +23,17 @@ services:
               capabilities: [gpu]
     volumes:
       - ./data:/app/data
+      - ./.env:/app/.env
     logging:
       driver: loki
       options:
         loki-url: http://localhost:3100/loki/api/v1/push
+    command: ${RUN_COMMAND}
 
   postgres:
     container_name: postgres
     image: postgres-contrib
+    network_mode: host
     ports:
       - 5432:5432
     environment:
@@ -50,6 +54,7 @@ services:
     image: getmeili/meilisearch:latest
     environment:
       MEILI_MASTER_KEY: ${MEILI_KEY}
+    network_mode: host
     ports:
       - 7700:7700
     volumes:
@@ -106,6 +111,7 @@ services:
   loki:
     container_name: loki
     image: grafana/loki:latest
+    user: root
     network_mode: host
     ports:
       - 3100:3100

@@ -7,19 +7,8 @@ base_headers = {
     "Content-Type": "application/json"
 }
 
-
 version = client.get_version()
 print(f"MeiliSearch version: {version}")
-
-
-res = requests.patch(
-    f"{MEILI_URL}/experimental-features",
-    json={"vectorStore": True},
-    headers=base_headers
-).json()
-
-print(res)
-
 
 for model_id in MODEL_IDS:
     model_detail = MODEL_DETAILS[model_id]
