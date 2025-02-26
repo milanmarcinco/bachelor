@@ -4,3 +4,7 @@ datasources:
     url: http://localhost:9090
     access: proxy
     isDefault: true
+  - name: loki
+    type: loki
+    url: http://localhost:3100
+    access: proxy

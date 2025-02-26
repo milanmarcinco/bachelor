@@ -1,8 +1,34 @@
 name: bachelor
 
 services:
+  script:
+    container_name: script
+    image: bachelor-script
+    environment:
+      - DB_NAME=${DB_NAME}
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_HOST=${DB_HOST}
+      - DB_PORT=${DB_PORT}
+      - MEILI_KEY=${MEILI_KEY}
+      - MEILI_URL=${MEILI_URL}
+    runtime: nvidia
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+    volumes:
+      - ./data:/app/data
+    logging:
+      driver: loki
+      options:
+        loki-url: http://localhost:3100/loki/api/v1/push
+
   postgres:
-    container_name: bachelor-postgres
+    container_name: postgres
     image: postgres-contrib
     ports:
       - 5432:5432
@@ -14,25 +40,33 @@ services:
       - postgres:/var/lib/postgresql/data
     env_file:
       - .env
+    logging:
+      driver: loki
+      options:
+        loki-url: http://localhost:3100/loki/api/v1/push
 
   meilisearch:
-    container_name: bachelor-meilisearch
+    container_name: meilisearch
     image: getmeili/meilisearch:latest
     environment:
       MEILI_MASTER_KEY: ${MEILI_KEY}
     ports:
-      - "7700:7700"
+      - 7700:7700
     volumes:
       - meili:/meili_data
     env_file:
       - .env
+    logging:
+      driver: loki
+      options:
+        loki-url: http://localhost:3100/loki/api/v1/push
 
   cadvisor:
     container_name: cadvisor
     image: gcr.io/cadvisor/cadvisor:latest
     network_mode: host
     ports:
-      - "8080:8080"
+      - 8080:8080
     volumes:
       - /:/rootfs:ro
       - /var/run:/var/run:rw
@@ -41,31 +75,68 @@ services:
       - /dev/disk:/dev/disk:ro
     privileged: true
 
+  nvidia:
+    container_name: nvidia
+    image: utkuozdemir/nvidia_gpu_exporter:1.1.0
+    network_mode: host
+    ports:
+      - 9835:9835
+    runtime: nvidia
+    devices:
+      - /dev/nvidiactl:/dev/nvidiactl
+      - /dev/nvidia0:/dev/nvidia0
+    volumes:
+      - /usr/lib/x86_64-linux-gnu/libnvidia-ml.so:/usr/lib/x86_64-linux-gnu/libnvidia-ml.so
+      - /usr/lib/x86_64-linux-gnu/libnvidia-ml.so.1:/usr/lib/x86_64-linux-gnu/libnvidia-ml.so.1
+      - /usr/bin/nvidia-smi:/usr/bin/nvidia-smi
+
   prometheus:
     container_name: prometheus
     image: prom/prometheus:latest
     network_mode: host
     ports:
-      - "9090:9090"
+      - 9090:9090
     volumes:
-      - "./conf/prometheus.yml:/etc/prometheus/prometheus.yml"
+      - prometheus:/prometheus
+      - ./conf/prometheus.yml:/etc/prometheus/prometheus.yml
     depends_on:
       - cadvisor
+
+  loki:
+    container_name: loki
+    image: grafana/loki:latest
+    network_mode: host
+    ports:
+      - 3100:3100
+    volumes:
+      - ./conf/loki.yml:/etc/loki/local-config.yaml
+
+  # promtail:
+  #   container_name: promtail
+  #   image: grafana/promtail:latest
+  #   network_mode: host
+  #   ports:
+  #     - 9080:9080
+  #   volumes:
+  #     - ./conf/promtail.yml:/etc/promtail/config.yml
+  #     - ./logs:/var/log:ro
+  #   depends_on:
+  #     - loki
 
   grafana:
     container_name: grafana
     image: grafana/grafana:latest
     network_mode: host
     ports:
-      - "3000:3000"
+      - 3000:3000
     environment:
       - GF_PATHS_PROVISIONING=/etc/grafana/provisioning
       - DS_PROMETHEUS=prometheus
     volumes:
-      - "grafana:/var/lib/grafana"
-      - "./conf/datasources.yml:/etc/grafana/provisioning/datasources/datasources.yml"
-      - "./conf/dashboard.json:/var/lib/grafana/dashboards/dashboard.json"
-      - "./conf/default.yml:/etc/grafana/provisioning/dashboards/default.yml"
+      - grafana:/var/lib/grafana
+      - ./conf/datasources.yml:/etc/grafana/provisioning/datasources/datasources.yml
+      - ./conf/dashboard.json:/var/lib/grafana/dashboards/dashboard.json
+      - ./conf/default.yml:/etc/grafana/provisioning/dashboards/default.yml
     depends_on:
       - prometheus
 
@@ -73,3 +144,4 @@ volumes:
   postgres:
   meili:
   grafana:
+  prometheus:
