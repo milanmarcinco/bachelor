@@ -101,6 +101,7 @@ services:
       - ./conf/prometheus.yml:/etc/prometheus/prometheus.yml
     depends_on:
       - cadvisor
+      - nvidia
 
   loki:
     container_name: loki
