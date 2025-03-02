@@ -26,9 +26,9 @@ for idx, document in enumerate(documents):
 
     sentences, paragraphs, pages = load_parts(doc_id)
 
-    sentences_batch_size = 100
+    sentences_batch_size = 200
     paragraphs_batch_size = 20
-    pages_batch_size = 5
+    pages_batch_size = 10
 
     sentence_batches = [sentences[i:i+sentences_batch_size]
                         for i in range(0, len(sentences), sentences_batch_size)]

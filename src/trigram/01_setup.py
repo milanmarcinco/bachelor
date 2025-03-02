@@ -30,7 +30,8 @@ db.execute("""
 
 db.execute("""
     CREATE INDEX IF NOT EXISTS part_idx
-    ON document_parts(part)
+    ON document_parts
+    USING HASH (part);
 """)
 
 db.execute("SET pg_trgm.similarity_threshold = 0;")
