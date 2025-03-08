@@ -6,6 +6,7 @@ from typing import List
 from lib.conf import Part, PARTS, MODEL_IDS, MODEL_DETAILS
 from lib.meili import client, get_index_name
 from lib.model import Model
+from lib.helpers import now
 
 with open("data/library/metadata.json", "r") as file:
     documents = json.load(file)
@@ -21,12 +22,12 @@ def load_parts(document_id: str, part: Part) -> List[str]:
 
 
 for model_id in MODEL_IDS:
-    print(f"[{model_id}]")
+    print(now(), f"[{model_id}]")
     embedder = Model(MODEL_DETAILS[model_id])
     dimensions = MODEL_DETAILS[model_id]["embedding_size"]
 
     for part in PARTS:
-        print(f"[{model_id}][{part}]")
+        print(now(), f"[{model_id}][{part}]")
         index_name = get_index_name(part, model_id)
         index = client.index(index_name)
         index.delete_all_documents()
@@ -36,7 +37,7 @@ for model_id in MODEL_IDS:
 
         for idx, document in enumerate(documents):
             docs_progress = f"{idx+1}/{len(documents)}"
-            print(f"[{model_id}][{part}][{docs_progress}]")
+            print(now(), f"[{model_id}][{part}][{docs_progress}]")
 
             doc_id = document["pk"]
             title = document["title"]
@@ -50,6 +51,7 @@ for model_id in MODEL_IDS:
                 batch_progress = f"{i+1}/{parts_batch_count}"
 
                 print(
+                    now(),
                     f"[{model_id}][{part}][{docs_progress}][{batch_progress}]: computing embeddings start"
                 )
 
@@ -61,11 +63,12 @@ for model_id in MODEL_IDS:
                     embeddings = embedder.encode(parts_batch)
                 except Exception as e:
                     # fmt: off
-                    print(f"[{model_id}][{part}][{docs_progress}][{batch_progress}]: Error computing embeddings: {e}")
+                    print(now(), f"[{model_id}][{part}][{docs_progress}][{batch_progress}]: Error computing embeddings: {e}")
                     continue
                     # fmt: on
 
                 print(
+                    now(),
                     f"[{model_id}][{part}][{docs_progress}][{batch_progress}]: computing embeddings finished"
                 )
 
@@ -77,6 +80,7 @@ for model_id in MODEL_IDS:
                     batch_progress = f"{j + 1}/{embeddings_batch_count}"
 
                     print(
+                        now(),
                         f"[{model_id}][{part}][{docs_progress}][{batch_progress}]: indexing start"
                     )
 
@@ -100,9 +104,10 @@ for model_id in MODEL_IDS:
                         index.add_documents(documents_batch)
                     except Exception as e:
                         # fmt: off
-                        print(f"[{model_id}][{part}][{docs_progress}][{batch_progress}]: Error inserting documents: {e}")
+                        print(now(), f"[{model_id}][{part}][{docs_progress}][{batch_progress}]: Error inserting documents: {e}")
                         # fmt: on
 
                     print(
+                        now(),
                         f"[{model_id}][{part}][{docs_progress}][{batch_progress}]: indexing finished"
                     )

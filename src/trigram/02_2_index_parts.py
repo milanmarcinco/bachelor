@@ -1,5 +1,7 @@
 import json
+
 from helpers.db import db
+from helpers.helpers import now
 
 MAX_CHARS = 80
 
@@ -22,30 +24,8 @@ def load_parts(document_id, part):
             return parts["pages"]
 
 
-print("Inserting documents...")
-
-batch_size = 100
-batches = [
-    documents[i:i+batch_size]
-    for i in range(0, len(documents), batch_size)
-]
-
-for batch in batches:
-    sql = f"""
-      INSERT INTO documents (id, title) VALUES
-      {", ".join(["(%s, %s)"] * len(batch))};
-    """
-
-    parameters = []
-    for document in batch:
-        parameters.append(document["pk"])
-        parameters.append(document["title"])
-
-    db.execute(sql, parameters)
-
-
 for part in ["page", "sentence", "paragraph"]:
-    print(f"[{part}]")
+    print(now(), f"[{part}]", flush=True)
 
     for idx, document in enumerate(documents):
         doc_id = document["pk"]
@@ -58,7 +38,11 @@ for part in ["page", "sentence", "paragraph"]:
 
         progress = f"[{part}][{idx+1}/{len(documents)}]"
 
-        print(f"{progress}: Processing document {short_title}")
+        print(
+            now(),
+            f"{progress}: Processing document {short_title}",
+            flush=True
+        )
 
         parts = load_parts(doc_id, part)
 
@@ -94,4 +78,4 @@ for part in ["page", "sentence", "paragraph"]:
                 parameters
             )
 
-    print()
+    print(now(), flush=True)

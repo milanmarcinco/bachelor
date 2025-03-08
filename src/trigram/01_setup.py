@@ -1,5 +1,7 @@
 from helpers.db import db
 
+print("Setting up database...", flush=True)
+
 db.execute("CREATE EXTENSION IF NOT EXISTS pg_trgm;")
 
 db.execute("""
@@ -35,3 +37,5 @@ db.execute("""
 """)
 
 db.execute("SET pg_trgm.similarity_threshold = 0;")
+
+print("Set up finished...", flush=True)

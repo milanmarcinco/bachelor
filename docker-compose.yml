@@ -25,10 +25,12 @@ services:
       - ./src:/app/src
       - ./data:/app/data
       - ./.env:/app/.env
-    logging:
-      driver: loki
-      options:
-        loki-url: http://localhost:3100/loki/api/v1/push
+    # logging:
+    #   driver: loki
+    #   options:
+    #     loki-url: http://localhost:3100/loki/api/v1/push
+    #     loki-batch-size: 1
+    #     loki-batch-wait: 5s
     command: ${RUN_COMMAND}
 
   postgres:
@@ -43,13 +45,14 @@ services:
       POSTGRES_PASSWORD: ${DB_PASSWORD}
     volumes:
       - postgres:/var/lib/postgresql/data
-      - ./conf/postgresql.conf:/var/lib/postgresql/data/postgresql.conf
     env_file:
       - .env
-    logging:
-      driver: loki
-      options:
-        loki-url: http://localhost:3100/loki/api/v1/push
+    # logging:
+    #   driver: loki
+    #   options:
+    #     loki-url: http://localhost:3100/loki/api/v1/push
+    #     loki-batch-size: 5
+    #     loki-batch-wait: 5s
 
   meilisearch:
     container_name: meilisearch
@@ -63,10 +66,12 @@ services:
       - meili:/meili_data
     env_file:
       - .env
-    logging:
-      driver: loki
-      options:
-        loki-url: http://localhost:3100/loki/api/v1/push
+    # logging:
+    #   driver: loki
+    #   options:
+    #     loki-url: http://localhost:3100/loki/api/v1/push
+    #     loki-batch-size: 5
+    #     loki-batch-wait: 5s
 
   cadvisor:
     container_name: cadvisor
@@ -110,16 +115,16 @@ services:
       - cadvisor
       - nvidia
 
-  loki:
-    container_name: loki
-    image: grafana/loki:latest
-    user: root
-    network_mode: host
-    ports:
-      - 3100:3100
-    volumes:
-      - loki:/tmp/loki
-      - ./conf/loki.yml:/etc/loki/local-config.yaml
+  # loki:
+  #   container_name: loki
+  #   image: grafana/loki:latest
+  #   user: root
+  #   network_mode: host
+  #   ports:
+  #     - 3100:3100
+  #   volumes:
+  #     - loki:/tmp/loki
+  #     - ./conf/loki.yml:/etc/loki/local-config.yaml
 
   # promtail:
   #   container_name: promtail

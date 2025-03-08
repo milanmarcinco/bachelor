@@ -4,6 +4,7 @@ from typing import List, Tuple
 from psycopg2.extensions import connection
 
 from helpers.db import connection_factory
+from helpers.helpers import now
 
 
 connection = connection_factory()
@@ -78,16 +79,15 @@ for part in parts:
         for idx, query in enumerate(queries):
             query_id = idx + 1
             task_id = f"{part}-{lang}-{query_id}"
-            batch_id = f"{part}-{lang}"
 
-            print(f"Processing {task_id}")
+            print(now(), f"Processing {task_id}", flush=True)
 
             result: List[Tuple[str, float]] | None = search(
                 part, query
             )
 
             if result is None:
-                print(f"! Failed {task_id}")
+                print(now(), f"! Failed {task_id}", flush=True)
 
             documents = [
                 {
@@ -108,6 +108,6 @@ for part in parts:
             with open(filepath, "w") as file:
                 json.dump(task_result, file, indent=2, ensure_ascii=False)
 
-            print(f"Finished {task_id}")
+            print(now(), f"Finished {task_id}", flush=True)
 
 connection.close()

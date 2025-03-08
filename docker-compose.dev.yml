@@ -1,9 +1,34 @@
 name: bachelor
 
 services:
+  script:
+    container_name: script
+    image: bachelor-script
+    network_mode: host
+    environment:
+      - DB_NAME=${DB_NAME}
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_HOST=${DB_HOST}
+      - DB_PORT=${DB_PORT}
+      - MEILI_KEY=${MEILI_KEY}
+      - MEILI_URL=${MEILI_URL}
+    volumes:
+      - ./src:/app/src
+      - ./data:/app/data
+      - ./.env:/app/.env
+    logging:
+      driver: loki
+      options:
+        loki-url: http://localhost:3100/loki/api/v1/push
+        loki-batch-size: 1
+        loki-batch-wait: 5s
+    command: ${RUN_COMMAND}
+
   postgres:
     container_name: postgres
     image: postgres-contrib
+    network_mode: host
     ports:
       - 5432:5432
     environment:
@@ -14,10 +39,19 @@ services:
       - postgres:/var/lib/postgresql/data
     env_file:
       - .env
+    logging:
+      driver: loki
+      options:
+        loki-url: http://localhost:3100/loki/api/v1/push
+        # loki-batch-size: 5
+        # loki-batch-wait: 5s
+    depends_on:
+      - loki
 
   meilisearch:
     container_name: meilisearch
     image: getmeili/meilisearch:latest
+    network_mode: host
     environment:
       MEILI_MASTER_KEY: ${MEILI_KEY}
     ports:
@@ -26,7 +60,44 @@ services:
       - meili:/meili_data
     env_file:
       - .env
+    logging:
+      driver: loki
+      options:
+        loki-url: http://localhost:3100/loki/api/v1/push
+        # loki-batch-size: 5
+        # loki-batch-wait: 5s
+    depends_on:
+      - loki
+
+  loki:
+    container_name: loki
+    image: grafana/loki:latest
+    user: root
+    network_mode: host
+    ports:
+      - 3100:3100
+    volumes:
+      - loki:/tmp/loki
+      - ./conf/loki.yml:/etc/loki/local-config.yaml
+
+  grafana:
+    container_name: grafana
+    image: grafana/grafana:latest
+    network_mode: host
+    ports:
+      - 3000:3000
+    environment:
+      - GF_PATHS_PROVISIONING=/etc/grafana/provisioning
+    volumes:
+      - grafana:/var/lib/grafana
+      - ./conf/datasources.yml:/etc/grafana/provisioning/datasources/datasources.yml
+      - ./conf/dashboard.json:/var/lib/grafana/dashboards/dashboard.json
+      - ./conf/default.yml:/etc/grafana/provisioning/dashboards/default.yml
+    depends_on:
+      - loki
 
 volumes:
   postgres:
   meili:
+  grafana:
+  loki:
