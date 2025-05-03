@@ -6,6 +6,7 @@ from typing import List, Tuple, TypedDict, Callable
 from psycopg2.extensions import connection
 
 from helpers.db import connection_factory
+from helpers.helpers import now
 
 
 class Task(TypedDict):
@@ -38,7 +39,13 @@ with open("data/dataset/02_queries-SK.json", "r") as file:
 with open("data/dataset/02_queries-DE.json", "r") as file:
     de_queries: List[str] = json.load(file)
 
-parts = ['paragraph', 'sentence', 'page']
+parts = ['paragraph', 'sentence', 'page'][1:2]
+threshold_by_unit = {
+    "page": 0.12,
+    "paragraph": 0.18,
+    "sentence": 0.21
+}
+
 languages = ["en", "sk", "de"]
 queries_by_language = {
     "en": en_queries,
@@ -48,11 +55,14 @@ queries_by_language = {
 
 
 def search(connection: connection, part: str, query: str):
+    threshold = threshold_by_unit[part]
+
     try:
         cursor = connection.cursor()
+
         cursor.execute("""
-            SET pg_trgm.similarity_threshold = 0;
-        
+            SET pg_trgm.similarity_threshold = %s;
+
             SELECT
                 id,
                 similarity
@@ -79,7 +89,7 @@ def search(connection: connection, part: str, query: str):
                 similarity DESC,
                 matches DESC,
                 id ASC;
-        """, (query, part, query))
+        """, (threshold, query, part, query))
 
         results = cursor.fetchall()
         cursor.close()
@@ -94,7 +104,7 @@ print_lock = Lock()
 
 def safe_print(*args, **kwargs):
     print_lock.acquire()
-    print(*args, **kwargs, flush=True)
+    print(f"{now()}", *args, **kwargs, flush=True)
     print_lock.release()
 
 
@@ -125,6 +135,7 @@ def process_tasks(idx: int, task_queue: Queue, result_queue: Queue, log: Callabl
             break
 
         task_id = f"{task['part']}-{task['lang']}-{task['query_id']}"
+        log(f"Thread[{idx+1}]: Starting {task_id}")
 
         result: List[Tuple[str, float]] | None = search(
             connection,
@@ -180,7 +191,7 @@ def process_results(result_queue: Queue, log: Callable):
 
 worker_threads: List[Thread] = []
 
-for idx in range(4):
+for idx in range(8):
     thread = Thread(
         target=process_tasks,
         args=(

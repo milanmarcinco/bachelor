@@ -8,6 +8,7 @@ from typing import List
 from lib.conf import Part, ModelId, PARTS, LANGUAGES, MODEL_IDS, MODEL_DETAILS
 from lib.meili import get_meilisearch_client, get_index_name
 from lib.model import Model
+from lib.helpers import now
 
 N_THREADS = 4
 
@@ -62,7 +63,7 @@ print_lock = Lock()
 
 def safe_print(*args, **kwargs):
     print_lock.acquire()
-    print(*args, **kwargs, flush=True)
+    print(now(), *args, **kwargs, flush=True)
     print_lock.release()
 
 
@@ -71,12 +72,18 @@ task_queue = Queue(size)
 result_queue = Queue(size)
 
 for model_id in MODEL_IDS:
+    safe_print(f"Initializing model {model_id}")
     embedder = Model(MODEL_DETAILS[model_id])
 
+    safe_print(f"Embedding queries...")
     for part in PARTS:
         for lang in LANGUAGES:
             queries = queries_by_language[lang]
-            vectors = embedder.encode(queries)
+
+            vectors = embedder.encode([
+                f"query: {query}"
+                for query in queries
+            ])
 
             for idx, query in enumerate(queries):
                 query_id = idx + 1
@@ -92,6 +99,8 @@ for model_id in MODEL_IDS:
                     "query_id": query_id,
                     "vector": vector
                 })
+
+    safe_print(f"Embedding finished...")
 
 
 def process_tasks(idx: int, task_queue: Queue, result_queue: Queue, log: Callable):
@@ -119,7 +128,7 @@ def process_tasks(idx: int, task_queue: Queue, result_queue: Queue, log: Callabl
         index = client.index(index_name)
 
         response = index.search(None, {
-            "limit": 1000,
+            "limit": 5,
             "showRankingScore": True,
             "vector": vector,
             "hybrid": {

@@ -17,13 +17,13 @@ env = dotenv.dotenv_values()
 MEILI_KEY: str = env["MEILI_KEY"]
 MEILI_URL: str = env["MEILI_URL"]
 
-PARTS: List[Part] = ["paragraph", "sentence", "page"][0:1]
+PARTS: List[Part] = ["paragraph", "sentence", "page"]
 LANGUAGES: List[Language] = ["en", "sk", "de"]
-MODEL_IDS: List[ModelId] = ["e5", "labse", "gte"][0:1]
+MODEL_IDS: List[ModelId] = ["e5", "labse", "gte"]
 
 MODEL_DETAILS: Dict[ModelId, ModelDetail] = {
     "e5": {
-        "model_name": "intfloat/multilingual-e5-large-instruct",
+        "model_name": "intfloat/multilingual-e5-large",
         "embedding_size": 1024
     },
     "labse": {

@@ -1,5 +1,4 @@
-import requests
-from lib.conf import PARTS, MODEL_IDS, MODEL_DETAILS, MEILI_URL, MEILI_KEY
+from lib.conf import PARTS, MODEL_IDS, MODEL_DETAILS, MEILI_KEY
 from lib.meili import client, get_index_name
 
 base_headers = {

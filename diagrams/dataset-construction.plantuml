@@ -1,0 +1,24 @@
+@startuml dataset-construction
+
+skinparam dpi 300
+
+start
+
+repeat
+  :Upload document;
+  :Generate summary;
+repeat while (More documents?) is (yes) not (no)
+
+:Generate search queries;
+
+repeat
+  :Translate queries into target language;
+repeat while (All languages covered?) is (yes) not (no)
+
+repeat
+  :Generate relevance judgments for query;
+repeat while (All queries covered?) is (no) not (yes)
+
+stop
+
+@enduml

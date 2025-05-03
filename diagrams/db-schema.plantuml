@@ -10,17 +10,9 @@ object documents {
 object document_parts {
   + id: uuid
   + document_id: uuid
-  + part: part_enum
   + content: text
 }
 
-object part_enum {
-  sentence
-  paragraph
-  page
-}
-
-document_parts --> documents
-document_parts --> part_enum
+documents <-- document_parts
 
 @enduml
