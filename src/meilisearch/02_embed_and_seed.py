@@ -60,7 +60,9 @@ for model_id in MODEL_IDS:
                 ]
 
                 try:
-                    embeddings = embedder.encode(parts_batch)
+                    embeddings = embedder.encode(
+                        [f"passage: {part}" for part in parts_batch]
+                    )
                 except Exception as e:
                     # fmt: off
                     print(now(), f"[{model_id}][{part}][{docs_progress}][{batch_progress}]: Error computing embeddings: {e}")

@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# This script moves all .pdf files from subdirectories of a specified root directory to the specified root directory.
+
 # Check if the user has provided a root directory
 if [ -z "$1" ]; then
     echo "Usage: $0 <root-directory>"

@@ -6,3 +6,9 @@ deepl
 psycopg2_binary
 requests
 pandas
+langdetect
+colbert-ai
+torch
+faiss-gpu
+numpy<2
+matplotlib
