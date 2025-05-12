@@ -18,7 +18,8 @@ The project compares traditional trigram-based information retrieval with modern
 
 ## Dataset
 
-For a fair comparison, a custom dataset was constructed, built on top of 396 academic publications in Slovak, German, and English. 
+For a fair comparison, a custom dataset was constructed, built on top of 396 academic publications in Slovak, German, and English.
+
 - **Summary generation:** summaries generated using OpenAI’s GPT-4o-mini.
 - **Query generation:** 500 search queries generated and translated into target languages using DeepL.
 - **Relevance judgments:** generated using LLM-based processing.
@@ -34,18 +35,18 @@ src/
 │   │   └── stats.ipynb                       # Scripts to print dataset stats - language distribution, lengths...
 │   │
 │   └── openai/
-│       ├── 00_clean-up-dataset.ipynb         # Removes missing metadata-pdf pairs
-│       ├── 01_openai-summaries.ipynb         # Used for generating summaries using OpenAI API
-│       ├── 02_openai-queries.ipynb           # Used for query generation based on summaries
-│       ├── 02_queries-deepl.ipynb            # Translation of generated queries using DeepL API
-│       ├── 03_openai-retrieval.ipynb         # Relevance judgments generation scripts
+│       ├── 00_clean-up.ipynb         # Removes missing metadata-pdf pairs
+│       ├── 01_summaries.ipynb         # Used for generating summaries using OpenAI API
+│       ├── 02_queries.ipynb           # Used for query generation based on summaries
+│       ├── 03_queries-translation.ipynb            # Translation of generated queries using DeepL API
+│       ├── 04_judgments.ipynb         # Relevance judgments generation scripts
 │       └── helpers.ipynb                     # Helper scripts to clean up OpenAI resources
 │
 │── text_extractor/
 │   ├── main.py                 # Text extractor entrypoint
 │   ├── extractor.py            # Core extractor logic
 │   └── pdftotext.sh            # Used to convert PDF files into raw text before further processing by the extractor ^
-│ 
+│
 │── trigram/
 │   ├── helpers/                # Helper functions
 │   ├── 01_setup.py             # Configures the database, creates tables, indexes...
@@ -128,14 +129,14 @@ requirements.txt                # Required Python libraries
 
 ### Setup and usage
 
-1. Clone and cd into the repository.
+#### 1. Clone and cd into the repository.
 
 ```bash
 git clone https://github.com/milanmarcinco/bachelor.git
 cd multilingual-academic-search
 ```
 
-2. Create and activate a virtual Python environment.
+#### 2. Create and activate a virtual Python environment.
 
 ```bash
 python -m venv env
@@ -144,16 +145,16 @@ python -m venv env
 source ./env/bin/activate
 ```
 
-3. Install necessary libraries.
+#### 3. Install necessary libraries.
 
 ```bash
 pip install -r requirements.txt
 ```
 
-Used libraries:
+##### Used libraries:
 
 - `sentence_transformers` - Framework for computing embeddings using transformer models.
-- `meilisearch` - Python client for Meiliseach API. 
+- `meilisearch` - Python client for Meiliseach API.
 - `python-dotenv` - Reads key-value pairs from a .env file.
 - `openai` - Official Python library for the OpenAI API.
 - `deepl` - Official Python library for the DeepL API.
@@ -184,6 +185,14 @@ To try out the experiment, follow the steps below.
 #### Evaluation
 
 After you have constructed the dataset and ran desired experiments, its output is saved in the `data/retrieval/` directory. Now, you can evaluate the obtained results in one of the evaluation Python notebooks in `src/evaluation`.
+
+## Deployment structure
+
+Entire experiment ran on a Google Cloud VM using 8x G2 vCPUs, 32GB of memory, and a single Nvidia Tesla L4 GPU.
+
+<div style="background: white; padding: 16px 16px 8px 16px; border-radius: 6px;">
+  <img src="diagrams/deployment.png" alt="Deployment diagram" />
+</div>
 
 ## Future development
 

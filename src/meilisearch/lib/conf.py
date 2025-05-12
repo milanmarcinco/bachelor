@@ -23,7 +23,7 @@ MODEL_IDS: List[ModelId] = ["e5", "labse", "gte"]
 
 MODEL_DETAILS: Dict[ModelId, ModelDetail] = {
     "e5": {
-        "model_name": "intfloat/multilingual-e5-large",
+        "model_name": "intfloat/multilingual-e5-large-instruct",
         "embedding_size": 1024
     },
     "labse": {
