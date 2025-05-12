@@ -35,11 +35,11 @@ src/
 │   │   └── stats.ipynb                       # Scripts to print dataset stats - language distribution, lengths...
 │   │
 │   └── openai/
-│       ├── 00_clean-up.ipynb         # Removes missing metadata-pdf pairs
-│       ├── 01_summaries.ipynb         # Used for generating summaries using OpenAI API
-│       ├── 02_queries.ipynb           # Used for query generation based on summaries
-│       ├── 03_queries-translation.ipynb            # Translation of generated queries using DeepL API
-│       ├── 04_judgments.ipynb         # Relevance judgments generation scripts
+│       ├── 00_clean-up.ipynb                 # Removes missing metadata-pdf pairs
+│       ├── 01_summaries.ipynb                # Used for generating summaries using OpenAI API
+│       ├── 02_queries.ipynb                  # Used for query generation based on summaries
+│       ├── 03_queries-translation.ipynb      # Translation of generated queries using DeepL API
+│       ├── 04_judgments.ipynb                # Relevance judgments generation scripts
 │       └── helpers.ipynb                     # Helper scripts to clean up OpenAI resources
 │
 │── text_extractor/
